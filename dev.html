@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>RunTZ Dev Login</title>
+
+<style>
+
+body {
+    margin:0;
+    background:#0b0b0f;
+    color:white;
+    font-family:Arial,sans-serif;
+    text-align:center;
+    padding-top:100px;
+}
+
+
+.box {
+
+    background:#17171f;
+    padding:35px;
+    border-radius:20px;
+    width:300px;
+    margin:auto;
+
+}
+
+
+input {
+
+    width:90%;
+    padding:12px;
+    border-radius:10px;
+    border:none;
+
+}
+
+
+button {
+
+    margin-top:15px;
+    padding:12px 25px;
+    border-radius:10px;
+    border:none;
+    cursor:pointer;
+    font-weight:bold;
+
+}
+
+
+#message {
+
+    margin-top:15px;
+
+}
+
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="box">
+
+
+<h1>❤️ RunTZ Dev</h1>
+
+<p>Developer Login</p>
+
+
+<input 
+id="password" 
+type="password" 
+placeholder="Enter password"
+>
+
+
+<br>
+
+
+<button onclick="login()">
+
+Login
+
+</button>
+
+
+<p id="message"></p>
+
+
+</div>
+
+
+
+<script>
+
+
+function login(){
+
+
+let password = 
+document.getElementById("password").value;
+
+
+
+if(password === "7Mikeoxmall7728472928:737/&19"){
+
+
+localStorage.setItem(
+
+"RunTZDev",
+
+"true"
+
+);
+
+
+
+window.location.href = "index.html";
+
+
+}
+
+else{
+
+
+document.getElementById("message").innerHTML =
+
+"❌ Incorrect Password";
+
+
+}
+
+
+}
+
+
+</script>
+
+
+</body>
+
+</html>
