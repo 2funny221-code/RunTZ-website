@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>RunTZ</title>
+
+<style>
+body {
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#0b0b0f;
+    color:white;
+    text-align:center;
+}
+
+header {
+    padding:40px;
+    background:linear-gradient(135deg,purple,hotpink);
+}
+
+h1 {
+    font-size:55px;
+}
+
+.button {
+    display:inline-block;
+    margin:10px;
+    padding:15px 25px;
+    background:white;
+    color:black;
+    border-radius:20px;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+.section {
+    padding:30px;
+}
+
+.card {
+    background:#17171f;
+    margin:20px auto;
+    padding:25px;
+    border-radius:20px;
+    max-width:500px;
+}
+
+canvas {
+    background:#70c5ce;
+    border-radius:20px;
+}
+
+input {
+    padding:10px;
+    border-radius:10px;
+    border:none;
+}
+
+button {
+    padding:10px 15px;
+    border-radius:10px;
+    border:none;
+    cursor:pointer;
+}
+
+footer {
+    padding:20px;
+    background:#050505;
+}
+</style>
+
+</head>
+
+<body>
+
+
+<header>
+
+<h1>RunTZ</h1>
+
+<p>Streamer Gamer Creator</p>
+
+
+<a class="button" href="https://m.twitch.tv/runtz_ytt">
+Twitch
+</a>
+
+<a class="button" href="https://youtube.com/@runtz_yt?si=IhWLdKZyQbKksDWY">
+YouTube
+</a>
+
+<a class="button" href="https://www.tiktok.com/@runt2_yt">
+TikTok
+</a>
+
+</header>
+
+
+
+<div class="section">
+
+
+<div class="card">
+
+<h2>Stream Schedule</h2>
+
+<p>
+July 22nd<br>
+6:30 PM<br>
+FIRST STREAM
+</p>
+
+</div>
+
+
+
+<div class="card">
+
+<h2>RunTZ Flappy Pikachu</h2>
+
+<input id="name" placeholder="Your name">
+
+<br><br>
+
+<canvas id="game" width="400" height="500"></canvas>
+
+<p>
+Click to fly. Click after losing to restart.
+</p>
+
+</div>
+
+
+
+
+<div class="card">
+
+<h2>Leaderboard</h2>
+
+<ol id="leaderboard"></ol>
+
+</div>
+
+
+
+</div>
+
+
+
+
+<footer>
+RunTZ 2026
+</footer>
+
+
+
+
+<script>
+
+const canvas=document.getElementById("game");
+const ctx=canvas.getContext("2d");
+
+
+let pikachu=new Image();
+
+pikachu.src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png";
+
+
+
+let player;
+let pipes;
+let score;
+let started;
+let gameOver;
+
+
+
+function resetGame(){
+
+player={
+x:80,
+y:250,
+size:40,
+velocity:0,
+gravity:0.23
+};
+
+pipes=[];
+score=0;
+started=false;
+gameOver=false;
+
+}
+
+
+resetGame();
+
+
+
+
+function jump(){
+
+if(gameOver){
+
+saveScore();
+
+resetGame();
+
+return;
+
+}
+
+
+started=true;
+
+player.velocity=-6.5;
+
+}
+
+
+
+
+
+canvas.addEventListener("pointerdown",jump);
+
+
+
+document.addEventListener("keydown",e=>{
+
+if(e.code==="Space"){
+
+jump();
+
+}
+
+});
+
+
+
+
+
+function createPipe(){
+
+let gap=160;
+
+let height=Math.random()*220+60;
+
+
+pipes.push({
+
+x:400,
+top:height,
+bottom:height+gap,
+passed:false
+
+});
+
+}
+
+
+
+
+
+function saveScore(){
+
+let name=document.getElementById("name").value || "Anonymous";
+
+
+let scores=JSON.parse(
+localStorage.getItem("RunTZScores")
+) || [];
+
+
+scores.push({
+
+name:name,
+score:score
+
+});
+
+
+scores.sort((a,b)=>b.score-a.score);
+
+
+scores=scores.slice(0,5);
+
+
+localStorage.setItem(
+"RunTZScores",
+JSON.stringify(scores)
+);
+
+
+showLeaderboard();
+
+}
+
+
+
+
+function showLeaderboard(){
+
+let list=document.getElementById("leaderboard");
+
+list.innerHTML="";
+
+
+let scores=JSON.parse(
+localStorage.getItem("RunTZScores")
+) || [];
+
+
+scores.forEach(player=>{
+
+let item=document.createElement("li");
+
+item.textContent=
+player.name+" - "+player.score;
+
+
+list.appendChild(item);
+
+});
+
+
+}
+
+
+showLeaderboard();
+
+
+
+
+
+
+function draw(){
+
+ctx.clearRect(0,0,400,500);
+
+
+
+ctx.drawImage(
+pikachu,
+player.x,
+player.y,
+player.size,
+player.size
+);
+
+
+
+
+if(!started){
+
+ctx.fillStyle="white";
+
+ctx.font="25px Arial";
+
+ctx.fillText(
+"Click To Start",
+110,
+200
+);
+
+
+requestAnimationFrame(draw);
+
+return;
+
+}
+
+
+
+
+if(!gameOver){
+
+
+player.velocity+=player.gravity;
+
+player.y+=player.velocity;
+
+
+
+pipes.forEach(pipe=>{
+
+
+pipe.x-=2;
+
+
+
+ctx.fillStyle="green";
+
+
+ctx.fillRect(
+pipe.x,
+0,
+50,
+pipe.top
+);
+
+
+ctx.fillRect(
+pipe.x,
+pipe.bottom,
+50,
+500
+);
+
+
+
+if(
+
+player.x+player.size > pipe.x &&
+player.x < pipe.x+50 &&
+(
+player.y < pipe.top ||
+player.y+player.size > pipe.bottom
+)
+
+){
+
+gameOver=true;
+
+}
+
+
+
+if(!pipe.passed && pipe.x < player.x){
+
+pipe.passed=true;
+
+score++;
+
+}
+
+
+
+});
+
+
+
+if(player.y<0 || player.y+player.size>500){
+
+gameOver=true;
+
+}
+
+
+
+ctx.fillStyle="white";
+
+ctx.font="25px Arial";
+
+ctx.fillText(
+"Score: "+score,
+20,
+40
+);
+
+
+
+}
+
+else{
+
+
+ctx.fillStyle="white";
+
+ctx.font="30px Arial";
+
+ctx.fillText(
+"Game Over",
+110,
+220
+);
+
+
+ctx.font="18px Arial";
+
+ctx.fillText(
+"Click to restart",
+120,
+260
+);
+
+
+}
+
+
+
+requestAnimationFrame(draw);
+
+}
+
+
+
+
+setInterval(()=>{
+
+if(started && !gameOver){
+
+createPipe();
+
+}
+
+},2200);
+
+
+
+draw();
+
+
+</script>
+
+
+</body>
+</html>
